@@ -1,15 +1,30 @@
 require 'rails_helper'
 
 RSpec.describe Server, type: :model do
+  subject {
+    described_class.new(
+      cluster_id:1,
+      friendly_name: 'ny_zero',
+      ip_string: '10.323.121.11',
+    )
+  }
+
+  it "is valid all valid attributes" do
+    expect(subject).to be_valid
+  end
+
   it "is not valid without a valid ip_string" do
-    expect(Server.new(cluster_id: 1, friendly_name: 'ny-zero')).to_not be_valid
+    subject.ip_string = nil
+    expect(subject).to_not be_valid
   end
 
   it "is valid without a cluster_id" do
-    expect(Server.new(ip_string: '10.323.121.11', friendly_name: 'ny-zero')).to be_valid
+    subject.cluster_id = nil
+    expect(subject).to be_valid
   end
 
   it "is valid without a friendly name" do
-    expect(Server.new(ip_string: '10.323.121.11')).to be_valid
+    subject.friendly_name = nil
+    expect(subject).to be_valid
   end
 end
