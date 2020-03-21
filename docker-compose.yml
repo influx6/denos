@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - "./data/postgres/db:/var/lib/postgresql/data"
+      - "./data/postgres/conns:/var/run/postgres"
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    environment:
+      POSTGRES_PASSWORD: starcraft
+      POSTGRES_USER: starcraft
+      POSTGRES_DB: denos
+      PGDATA: /var/lib/postgresql/data

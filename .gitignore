@@ -7,6 +7,10 @@
 .DS_STORE
 .DS_Store
 
+# Ignore env files
+.env
+.env.*
+
 # Ignore bundler config.
 /.bundle
 /data
