@@ -1,12 +1,14 @@
 IP_ADDRESS_REGEX = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
 
 class Server < ApplicationRecord
+  belongs_to :Cluster, optional: true
+
   validates :ip_string, presence: true
   validate :only_valid_ip_addresses
 
   def get_cluster
     if self.cluster_id?
-      return Cluster.findById(self.clister_id)
+      return Cluster.find_by(id: self.cluster_id)
     end
   end
 
