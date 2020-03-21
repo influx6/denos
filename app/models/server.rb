@@ -1,7 +1,7 @@
 IP_ADDRESS_REGEX = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
 
 class Server < ApplicationRecord
-  belongs_to :Cluster, optional: true
+  belongs_to :cluster, optional: true
 
   validates :ip_string, presence: true
   validate :only_valid_ip_addresses

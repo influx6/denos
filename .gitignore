@@ -21,6 +21,10 @@
 !/log/.keep
 !/tmp/.keep
 
+# Ignore vendor
+/.bundle
+/vendor/bundle
+
 # Ignore uploaded files in development.
 /storage/*
 !/storage/.keep

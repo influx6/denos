@@ -1,5 +1,6 @@
 class Cluster < ApplicationRecord
-  has_many :Server
+  has_many :server
+  
   validates :name, presence: true
   validates :subdomain, presence: true, length: { maximum: 5 }
 
