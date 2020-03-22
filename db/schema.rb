@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_21_062754) do
+ActiveRecord::Schema.define(version: 2020_03_22_062650) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,14 +20,16 @@ ActiveRecord::Schema.define(version: 2020_03_21_062754) do
     t.string "subdomain"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["subdomain"], name: "index_clusters_on_subdomain"
   end
 
   create_table "servers", force: :cascade do |t|
+    t.string "ip_string"
     t.string "friendly_name"
     t.bigint "cluster_id"
-    t.string "ip_string"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["ip_string"], name: "index_servers_on_ip_string"
   end
 
 end

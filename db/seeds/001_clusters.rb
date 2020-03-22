@@ -5,7 +5,7 @@
     ['Hong Kong', 'hk'],
     ['Berlin', 'br'],
     ['Lagos', 'lg'],
-    ['Lagos', 'los'],
+    ['Macau', 'ma'],
     ['Ogun', 'og'],
     ['Akra', 'ak'],
 ].each do |item|
