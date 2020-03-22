@@ -1,7 +1,7 @@
 class DomainController < ApplicationController
 
   def index 
-  	@servers = Server.all
+  	@servers = Server.all.order(friendly_name: :asc)
   end
 
   def register
