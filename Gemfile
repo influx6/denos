@@ -20,6 +20,7 @@ gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.7'
 # Integrate with AWS services
+gem 'aws-sdk-route53'
 gem 'aws-sdk-rails'
 
 # Use Redis adapter to run Action Cable in production

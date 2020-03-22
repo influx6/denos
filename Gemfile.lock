@@ -68,6 +68,9 @@ GEM
     aws-sdk-rails (3.0.5)
       aws-sdk-ses (~> 1)
       railties (>= 5.2.0)
+    aws-sdk-route53 (1.31.0)
+      aws-sdk-core (~> 3, >= 3.71.0)
+      aws-sigv4 (~> 1.1)
     aws-sdk-ses (1.28.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
@@ -241,6 +244,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-rails
+  aws-sdk-route53
   bootsnap (>= 1.4.2)
   byebug
   capybara (>= 2.15)
