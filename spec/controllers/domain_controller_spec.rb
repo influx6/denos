@@ -16,10 +16,12 @@ RSpec.describe DomainController, type: :controller do
 
 			get :index
 			expect(assigns(:servers)).to eq([server])
+			server.destroy
 		end
 		it "should render the index template" do
 			get :index
 			expect(response).to render_template("index")
+			expect(response.status).to eq(200)
 		end
 	end
 end
