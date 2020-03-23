@@ -12,4 +12,9 @@
   <body>
     <%= yield %>
   </body>
+  <script type="application/javascript">
+    setTimeout(function () {
+      document.querySelectorAll("div.flash").forEach((elem) => elem.remove())
+    }, 3000)
+  </script>
 </html>
