@@ -5,14 +5,11 @@ require 'services/dns_service'
 include DNSService::Route53
 
 RSpec.describe :Route53Service  do
-	cluster = Cluster.new(subdomain: 'ba', name:'Barcelona')
+	cluster = Cluster.create(subdomain: 'ba', name:'Barcelona')
 	cluster_domain = create_resource_record_name('ba', 'dento.com.')
 
-	server1 = Server.new(ip_string: '32.232.12.12')
-	server1.cluster = cluster
-
-	server2 = Server.new(ip_string: '42.232.12.12')
-	server2.cluster = cluster
+	server1 = Server.create(ip_string: '32.232.12.12', cluster_id: cluster.id)
+	server2 = Server.create(ip_string: '42.232.12.12', cluster_id: cluster.id)
 
 	no_a_response =  {
 		is_truncated: false,
@@ -53,11 +50,12 @@ RSpec.describe :Route53Service  do
 			stub_responses: true
 		)
 
-		r53 = Route53Service.new(hostedZone, client)
+		r53 = Provider.new(hostedZone, client)
 
 		it "should be able to get resource set from Route53" do
 			client.stub_responses(:list_resource_record_sets, no_a_response)
 
+			r53.reload_records()
 			res = r53.get_records()
 			expect(res).not_to eq(nil)
 			expect(res.size).to eq(0)
@@ -77,6 +75,7 @@ RSpec.describe :Route53Service  do
 		it "should be able to verify if a server1 is registered" do
 			client.stub_responses(:list_resource_record_sets, server_one_only)
 
+			r53.reload_records()
 			res = r53.get_records()
 			expect(res).not_to eq(nil)
 			expect(res.size).to eq(1)
@@ -94,6 +93,7 @@ RSpec.describe :Route53Service  do
 		it "should be able to verify if a server2 is registered in cluster" do
 			client.stub_responses(:list_resource_record_sets, server_one_two)
 
+			r53.reload_records()
 			res = r53.get_records()
 			expect(res).not_to eq(nil)
 			expect(res.size).to eq(1)
@@ -116,6 +116,7 @@ RSpec.describe :Route53Service  do
 		it "should be able to verify server2 is no more registered" do
 			client.stub_responses(:list_resource_record_sets, server_one_only)
 
+			r53.reload_records()
 			res = r53.get_records()
 			expect(res).not_to eq(nil)
 			expect(res.size).to eq(1)
@@ -135,6 +136,7 @@ RSpec.describe :Route53Service  do
 		it "should be able to verify if server1 is de-registered" do
 			client.stub_responses(:list_resource_record_sets, no_a_response)
 
+			r53.reload_records()
 			res = r53.get_records()
 			expect(res).not_to eq(nil)
 			expect(res.size).to eq(0)
