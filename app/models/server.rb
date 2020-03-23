@@ -7,7 +7,7 @@ class Server < ApplicationRecord
   validate :only_valid_ip_addresses
 
   def get_cluster
-    if self.cluster_id?
+    if !self.cluster_id.blank?
       return Cluster.find_by(id: self.cluster_id)
     end
   end
