@@ -1,24 +1,64 @@
 # README
+Project is based on dns management test required by ExpressVPN.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### Project Rquirements
 
-Things you may want to cover:
+The following setup was used during the development of this project:
 
-* Ruby version
+- homebrew
+- PostgreSQL
+- ruby 2.6.5p114
+- docker and docker-compose
 
-* System dependencies
+You should be able to get most except for docker and docker-compose setup by running
 
-* Configuration
+```
+make setup
+```
 
-* Database creation
+### Database initialization
 
-* Database initialization
+The project utilizes docker to boot up a sample PostgreSQL database for development
+and testing, so ensure to have docker and docker compose setup, see [Docker Setup for Mac](https://docs.docker.com/docker-for-mac/).
 
-* How to run the test suite
+You can easily boot-up database, by executing the ff:
+
+```
+make start-db
+
+```
+
+To setup database for development, testing or production, execute:
+
+```
+make db-setup env=development
+```
+
+Swap `development` for which ever environment you wish to setup
+
+
+### How to run project locally
+
+Once docker and database setup as describe in previous section is complete, simply execute the following:
+
+
+```
+make start
+```
+
+Navigate your browser to http://localhost:3000 and you should be ready to go.
+
+### How to run the test suite
+
+Provider within project is a combination of unit, functional and integration tests, to execute:
+
+```
+make test
+```
 
 * Services (job queues, cache servers, search engines, etc.)
 
-* Deployment instructions
+### Deployment
 
-* ...
+As required, the project will be deployed to provied heroku server.
+
