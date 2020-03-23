@@ -13,6 +13,10 @@ class ResourceRecord
 		@rr = resoure_record
 	end
 
+	def addr
+		return [@subdomain, @domain].join(".")
+	end
+
 	def size
 		return @rr.resource_records.size
 	end

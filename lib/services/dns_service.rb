@@ -90,9 +90,10 @@ module DNSService
 			}
 		end
 
-		# Route53Server takes a few short cuts to reduce multiple look ups
+		# Provider takes a few short cuts to reduce multiple look ups
 		# in that it caches 
-		class Route53Service
+		class Provider
+			include DNSService::Route53
 
 			 def initialize(hosted_zone_id, r53Client)
 				@r53 = r53Client
@@ -101,16 +102,68 @@ module DNSService
 			 end
 
 			 def get_records
-			 	# ensure we have latest records, as we may have scaled out
-			 	# this to more instances or there maybe user updated records
-			 	# which will may in-memory cache stale.
-			 	#
-			 	# More so, it's just simpler to do this here and try to mitigate
-			 	# all the headaches caches will cause, it's supposed to be simple
-			 	# anyway. LOL.
-		 		self.reload_records()
+				# do a record reload if we have an empty map
+				# as regards registered servers.
+				if @resource_record_cache.empty?
+					self.reload_records()
+				end
 
+				# Return what we have, let user ensure to reload
 			 	return @resource_record_cache
+			 end
+
+			 def get_servers
+				records = []
+				self.get_records().each do |subdomain, rs|
+					ips = rs.to_ip_list()
+					servers = Server.where(ip_string: ips)
+
+					# check for ips which where not found
+					# roughly a O(n^2) complexity here, but
+					# it's an acceptable cost.
+					# As ips will be only ever equal to or greater servers.length)
+					ips.each do |ip|
+						server = servers.find { |s| s.ip_string == ip }
+						if server != nil
+							records.push({
+								server: server,
+								domain: rs.addr(),
+								ip: server.ip_string,
+								subdomain: rs.subdomain,
+							})
+							next
+						end
+
+						records.push({
+							ip: ip,
+							server: nil,
+							domain: rs.addr(),
+							subdomain: rs.subdomain,
+						})
+					end
+				end
+				return records
+			 end
+
+			 def get_server_domain(server)
+				dns_records = @resource_record_cache
+				dns_record = dns_records[server.cluster.subdomain]
+
+				if dns_record == nil
+					return
+				end
+
+				if dns_record.has_ip(server.ip_string)
+					return dns_record.addr()
+				end
+			 end
+
+			 def has_server(server)
+					dns_record = @resource_record_cache[server.cluster.subdomain]
+					if dns_record == nil
+						return false
+					end
+					return dns_record.has_ip(server.ip_string)
 			 end
 
 			 def reload_records
@@ -118,14 +171,9 @@ module DNSService
 			 end
 
 			 def add_server(server)
-			 	# ensure we have latest records, as we may have scaled out
-			 	# this to more instances or there maybe user updated records
-			 	# which will may in-memory cache stale.
-			 	#
-			 	# More so, it's just simpler to do this here and try to mitigate
-			 	# all the headaches caches will cause, it's supposed to be simple
-			 	# anyway. LOL.
-		 		self.reload_records()
+					if @resource_record_cache.empty?
+						self.reload_records()
+					end
 
 			 	if !server.valid?
 			 		return false
@@ -138,42 +186,35 @@ module DNSService
 			 	local_rr = nil
 			 	local_record = @resource_record_cache[server.cluster.subdomain]
 
-			 	domain_name = Route53::create_resource_record_name(server.cluster.subdomain, @hosted_zone.name)
+			 	domain_name = create_resource_record_name(server.cluster.subdomain, @hosted_zone.name)
 			 	if local_record == nil
-						domain_rs = Route53::create_resource_record_hash(server.ip_string)
+						domain_rs = create_resource_record_hash(server.ip_string)
 
-			 	  local_rr = Route53::create_record_set_hash('A', domain_name, Route53::DEFAULT_TTL, [domain_rs])
+			 	  local_rr = create_record_set_hash('A', domain_name, DEFAULT_TTL, [domain_rs])
 						local_record = ResourceRecord.new(local_rr, @hosted_zone.name, server.cluster.subdomain)
 
 						# add to in-memory cache and list
 						@resource_record_cache[server.cluster.subdomain] = local_record
 				else
 				 	local_record.add_ip(server.ip_string)
-				 	local_rr = Route53::create_record_set_hash('A', domain_name, Route53::DEFAULT_TTL, local_record.to_map_list())
+				 	local_rr = create_record_set_hash('A', domain_name, DEFAULT_TTL, local_record.to_map_list())
 				end
 
 				# send update request to aws.
 				# keep it simple, send one at a time.
-				crr = Route53::create_change_resource_set_request('UPSERT', @hosted_zone, local_rr)
+				crr = create_change_resource_set_request('UPSERT', @hosted_zone, local_rr)
 
 				# am not sure we need to ChangeSet returned
 				@r53.change_resource_record_sets(crr)
 
-			 	return true
+				self.reload_records()
+				return true
 			 end
 
 			 def rm_server(server)
-			 	# ensure we have latest records, as we may have scaled out
-			 	# this to more instances or there maybe user updated records
-			 	# which will may in-memory cache stale.
-			 	#
-			 	# More so, it's just simpler to do this here and try to mitigate
-			 	# all the headaches caches will cause, it's supposed to be simple
-			 	# anyway. LOL.
-			 	#
-			 	#
-			 	# Comes with the cost of making many request on all ops though.
-		 		self.reload_records()
+					if @resource_record_cache.empty?
+						self.reload_records()
+					end
 
 			 	if !server.valid?
 			 		return false
@@ -196,12 +237,12 @@ module DNSService
 				 	local_record.rm_ip(server.ip_string)
 			 	end
 
-			 	domain_name = Route53::create_resource_record_name(local_record.subdomain, @hosted_zone.name)
-		 	    local_rr = Route53::create_record_set_hash('A', domain_name, Route53::DEFAULT_TTL, local_record.to_map_list())
+			 	domain_name = create_resource_record_name(local_record.subdomain, @hosted_zone.name)
+		 	    local_rr = create_record_set_hash('A', domain_name, DEFAULT_TTL, local_record.to_map_list())
 
 				# send update request to aws.
 				# keep it simple, send one at a time.
-				crr = Route53::create_change_resource_set_request(action, @hosted_zone, local_rr)
+				crr = create_change_resource_set_request(action, @hosted_zone, local_rr)
 
 				# am not sure we need to ChangeSet returned
 				@r53.change_resource_record_sets(crr)
@@ -210,6 +251,7 @@ module DNSService
 					@resource_record_cache.delete(server.cluster.subdomain)
 				end
 
+				self.reload_records()
 			 	return true
 			 end
 
@@ -235,7 +277,7 @@ module DNSService
 				old = @resource_record_cache
 				response.resource_record_sets.each do |record|
 					if record.type == 'A' 
-						rr_data = Route53::get_domain_from_resource_record(record)
+						rr_data = get_domain_from_resource_record(record)
 
 						rr = nil
 						if old.key?(rr_data[:subdomain])
