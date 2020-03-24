@@ -1,33 +1,40 @@
 require 'rails_helper'
 
 RSpec.describe Cluster, type: :model do
-  subject {
-    described_class.new(
-      name: 'walrus',
-      subdomain: 'wal',
-    )
-  }
-
   describe "Validations" do
+    cluster = nil
+    before :each do
+      cluster = Cluster.create(
+          name: 'walrus',
+          subdomain: 'wal',
+      )
+    end
+
     it "is valid with valid attributes" do
-      expect(subject).to be_valid
+      expect(cluster).to be_valid
     end
     it "is not valid without attributes" do
-      subject.name = nil
-      subject.subdomain = nil
-      expect(subject).to_not be_valid
+      cluster.name = nil
+      cluster.subdomain = nil
+      expect(cluster).to_not be_valid
     end
     it "is not valid without a name" do
-      subject.name = nil
-      expect(subject).to_not be_valid
+      cluster.name = nil
+      expect(cluster).to_not be_valid
     end
     it "is not valid without a subdomain" do
-      subject.subdomain = nil
-      expect(subject).to_not be_valid
+      cluster.subdomain = nil
+      expect(cluster).to_not be_valid
     end
     it "should not accept a subdomain longer than 5 characters" do
-      subject.subdomain = 'lalalala'
-      expect(subject).to_not be_valid
+      cluster.subdomain = 'lalalala'
+      expect(cluster).to_not be_valid
+    end
+
+    it "should not be able to save cluster with same subdomain" do
+      c = Cluster.create(name: 'walrus', subdomain: 'wal')
+      expect(c).to_not be_valid
+      expect(c.id).to eq(nil)
     end
   end
 end

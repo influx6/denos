@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>XvCodingChallengeAlexE</title>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<head>
+  <title>XvCodingChallengeAlexE</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
-  </head>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+</head>
 
-  <body>
-    <%= yield %>
-  </body>
-  <script type="application/javascript">
+<body>
+<%= yield %>
+</body>
+<script type="application/javascript">
     setTimeout(function () {
-      document.querySelectorAll("div.flash").forEach((elem) => elem.remove())
+        document.querySelectorAll("div.flash").forEach((elem) => elem.remove())
     }, 5000)
-  </script>
+</script>
 </html>

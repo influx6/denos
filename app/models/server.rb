@@ -4,7 +4,7 @@ class Server < ApplicationRecord
   belongs_to :cluster
 
   validates :cluster_id, presence: true
-  validates :ip_string, presence: true
+  validates :ip_string, presence: true, uniqueness: true
   validate :only_valid_ip_addresses
 
   def get_cluster

@@ -16,20 +16,20 @@ ActiveRecord::Schema.define(version: 2020_03_22_062650) do
   enable_extension "plpgsql"
 
   create_table "clusters", force: :cascade do |t|
-    t.string "name"
-    t.string "subdomain"
+    t.string "name", null: false
+    t.string "subdomain", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["subdomain"], name: "index_clusters_on_subdomain"
+    t.index ["subdomain"], name: "index_clusters_on_subdomain", unique: true
   end
 
   create_table "servers", force: :cascade do |t|
-    t.string "ip_string"
+    t.string "ip_string", null: false
     t.string "friendly_name"
     t.bigint "cluster_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["ip_string"], name: "index_servers_on_ip_string"
+    t.index ["ip_string"], name: "index_servers_on_ip_string", unique: true
   end
 
 end

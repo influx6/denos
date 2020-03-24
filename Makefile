@@ -47,7 +47,7 @@ setup-db:
 	rails db:setup RAILS_ENV=$(env)
 
 start-db:
-	docker-compose up
+	docker-compose up -d
 
 stop-db:
 	docker-compose down
