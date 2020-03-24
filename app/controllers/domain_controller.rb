@@ -28,8 +28,8 @@ class DomainController < ApplicationController
     AWS::Service::R53.reload_records()
 
     begin
-      server = Server.find(params[:id])
-      AWS::Service::R53.add_server(server)
+      @server = Server.find(params[:id])
+      AWS::Service::R53.add_server(@server)
     rescue
       puts "Bad things have happend ${$!}"
       flash[:error] = self.class::REGISTER_FAILURE
@@ -37,7 +37,7 @@ class DomainController < ApplicationController
       flash[:notice] = self.class::REGISTER_SUCCESS
     end
 
-    redirect_to action: "index"
+    redirect_to root_url
   end
 
   def deregister
@@ -57,15 +57,16 @@ class DomainController < ApplicationController
     AWS::Service::R53.reload_records()
 
     begin
-      server = Server.find(params[:id])
-      AWS::Service::R53.rm_server(server)
+      @server = Server.find(params[:id])
+      AWS::Service::R53.rm_server(@server)
     rescue
       puts "Bad things have happend ${$!}"
       flash[:error] = self.class::UNREGISTER_FAILURE
     else
       flash[:notice] = self.class::UNREGISTER_SUCCESS
     end
-    redirect_to action: "index"
+    
+    redirect_to root_url
   end
 
 end
