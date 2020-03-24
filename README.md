@@ -61,6 +61,9 @@ Swap `development` for which ever environment you wish to setup
 
 Once docker and database setup as describe in previous section is completed, we need to setup an `.env` file to host environment variables used by the application.
 
+
+*This is required for both development and when executing tests*
+
 Add the following to an '.env' file:
 
 ```bash
