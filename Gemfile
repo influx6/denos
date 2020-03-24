@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.5'
 
+gem 'faker', '>= 2.10.2'
 gem 'dotenv-rails', require: 'dotenv/rails-now'
 
 gem "rack-timeout"
@@ -40,7 +41,6 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
   gem 'rspec-rails', '4.0.0.beta3'
-  gem 'faker', '>= 2.10.2'
 end
 
 group :development do
