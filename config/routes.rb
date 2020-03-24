@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get 'domain/index'
+  get 'domain', to: 'domain#index'
 
   post '/domain/register/:id', to: 'domain#register', as: 'domain_register'
   delete '/domain/deregister/:id', to: 'domain#deregister', as: 'domain_deregister'
