@@ -81,13 +81,7 @@ RSpec.describe :Route53Service do
     end
 
     it "should be able to register a server1 in a cluster" do
-      client.stub_responses(:change_resource_record_sets, {
-          change_info: {
-              status: 'PENDING',
-              id: '/change/C103765939ACDRVNAVPS6',
-              submitted_at: Time.now,
-          }
-      })
+      client.stub_responses(:change_resource_record_sets, change_info_response)
       expect(r53.add_server(server1)).not_to eq(false)
     end
 

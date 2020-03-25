@@ -2,6 +2,7 @@ require 'aws-sdk-core'
 require 'services/dns_service'
 
 Aws.config.update({
+					  stub_responses: ENV['RAILS_ENV'] == 'test',
                       region: ENV['AWS_REGION'],
                       credentials: Aws::Credentials.new(
                           ENV['AWS_ACCESS_KEY_ID'],
@@ -11,6 +12,7 @@ Aws.config.update({
 
 module AWS
   class Service
-    R53 = DNSService::Route53::Provider.new(ENV['AWS_HOSTED_ZONE'], Aws::Route53::Client.new)
+  	R53Client = Aws::Route53::Client.new
+    R53 = DNSService::Route53::Provider.new(ENV['AWS_HOSTED_ZONE'], AWS::Service::R53Client)
   end
 end
