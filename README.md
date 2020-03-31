@@ -21,9 +21,13 @@ make setup
 1. Added rubocop to better understand and fix styling issues.
 1. Removed the usage of a in-memory cache to ensure code is more stateless, ending possible issues with data race conditions.
 1. Updated tests to focus entirely less on coverage and on specific functionality, like:
-      a. Change Set format and value in DNS Service
-      b. Expected return data for DNSService::Route53.get_servers
 
+    a. Change Set format and value in DNS Service
+    
+    b. Expected return data for DNSService::Route53.get_servers
+
+I would also like to apologise for the initial rush to submit the project without properly
+handling the faults clearly visible within initial release of this project.
 
 ### Thoughts
 
