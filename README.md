@@ -16,6 +16,15 @@ You should be able to get most except for docker and docker-compose setup by run
 make setup
 ```
 
+### Changes
+
+1. Added rubocop to better understand and fix styling issues.
+1. Removed the usage of a in-memory cache to ensure code is more stateless, ending possible issues with data race conditions.
+1. Updated tests to focus entirely less on coverage and on specific functionality, like:
+      a. Change Set format and value in DNS Service
+      b. Expected return data for DNSService::Route53.get_servers
+
+
 ### Thoughts
 
 Some thoughts which could not be expressed as comments in code but may be something the reviewer may have desired to ask:
