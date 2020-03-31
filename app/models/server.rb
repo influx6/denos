@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-IP_ADDRESS_REGEX = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
 
 class Server < ApplicationRecord
   belongs_to :cluster
@@ -12,8 +11,11 @@ class Server < ApplicationRecord
       errors.add(:ip_string, "can not be nil")
       return
     end
-    unless ip_string.match(IP_ADDRESS_REGEX)
+    unless ip_string.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)
       errors.add(:ip_string, "can only be valid ipv4 addresses")
+    end
+    if Server.where(ip_string: ip_string).exists?
+      errors.add(:ip_string, "duplicate ip_string not allowed")
     end
   end
 end
