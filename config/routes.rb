@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 Rails.application.routes.draw do
   get 'domain/index'
   get 'domain', to: 'domain#index'
