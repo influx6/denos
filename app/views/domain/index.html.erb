@@ -48,17 +48,17 @@
       </thead>
 
       <tbody>
-      <% @servers.each do |server, index| %>
+      <% @servers.each do |server| %>
         <tr>
           <td><%= server.friendly_name %></td>
           <td><%= server.cluster.name %></td>
-          <% if is_registered(server) %>
-            <td><%= registered_domain(server) %></td>
+          <% if is_registered(@subdomains_hash, server) %>
+            <td><%= registered_domain(@subdomains_hash, server) %></td>
           <% else %>
             <td>NONE</td>
           <% end %>
           <td>
-            <% if is_registered(server) %>
+            <% if is_registered(@subdomains_hash, server) %>
               <%= link_to "Remove from rotation", domain_deregister_path(server), :method => :delete %>
             <% else %>
               <%= link_to "Add to rotation", domain_register_path(server), :method => :post %>
