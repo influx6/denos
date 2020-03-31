@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -5,6 +6,10 @@ ruby '2.6.5'
 
 gem 'faker', '>= 2.10.2'
 gem 'dotenv-rails', require: 'dotenv/rails-now'
+
+# handle better code formatting
+gem 'rubocop', require: false
+gem 'rubocop-shopify', require: false
 
 gem "rack-timeout"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -55,7 +60,7 @@ group :test do
   # Easy installation and use of web drivers to run system tests with browsers
   gem 'webdrivers'
   gem 'database_cleaner-active_record'
-  gem 'rails-controller-testing' 
+  gem 'rails-controller-testing'
   gem 'shoulda-matchers'
 end
 
