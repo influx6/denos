@@ -134,10 +134,6 @@ module DNSService
     end
 
     def add_server(server)
-      unless server.valid?
-        raise "Bad server record provided"
-      end
-
       domain_name = [server.cluster.subdomain, @hosted_zone.name].join('.')
       record = get_resource_record_for(server)
 
@@ -145,6 +141,7 @@ module DNSService
         domain_rs = create_resource_record_hash(server.ip_string)
         local_rr = create_record_set_hash('A', domain_name, DEFAULT_TTL, [domain_rs])
         crr = change_resource_set_request('UPSERT', @hosted_zone, local_rr)
+
         @r53.change_resource_record_sets(crr)
         return
       end
@@ -160,11 +157,11 @@ module DNSService
     end
 
     def rm_server(server)
-      unless server.valid?
-        raise "Bad server record provided"
+      record = get_resource_record_for(server)
+      if record.nil?
+        return
       end
 
-      record = get_resource_record_for(server)
       unless record_has_ip(record, server.ip_string)
         return
       end
@@ -199,7 +196,12 @@ module DNSService
       server_cluster_address = [server.cluster.subdomain, @hosted_zone.name].join('.')
       response = @r53.list_resource_record_sets({ hosted_zone_id: @hosted_zone.id, start_record_name: server_cluster_address, start_record_type: 'A', max_items: 1 })
 
-      unless !response.resource_record_sets.empty?
+      if response.resource_record_sets.empty?
+        return nil
+      end
+
+      first_record = response.resource_record_sets[0]
+      if first_record.name != server_cluster_address
         return nil
       end
 
