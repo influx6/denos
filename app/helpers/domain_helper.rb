@@ -6,7 +6,7 @@ module DomainHelper
 
   def is_registered(records, server)
     record = records[server.cluster.subdomain]
-    if record.nil?
+    if record == nil
       return false
     end
     record_has_ip(record, server.ip_string)
