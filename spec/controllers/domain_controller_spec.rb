@@ -7,7 +7,7 @@ include(DNSService)
 
 RSpec.describe(DomainController, type: :controller) do
   server_ip = '10.10.10.10'
-  cluster_domain = 'wfi.waffi.com.'
+  cluster_domain = 'wfi.DNSName'
 
   no_a_response = {
     is_truncated: false,
