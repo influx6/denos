@@ -1,5 +1,5 @@
 # README
-Project is based on dns management test required by ExpressVPN.
+Project is a simple AWS dns management demo using Ruby on Rails.
 
 ### Project Rquirements
 
@@ -134,5 +134,4 @@ make test
 
 ### Deployment
 
-As required, the project will be deployed to provied heroku server.
-
+Use Heroku to simply test this out.
